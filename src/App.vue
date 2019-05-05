@@ -1,29 +1,41 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <Navbar/>
     <router-view/>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-property-decorator";
+
+import Navbar from "@/components/Navbar.vue";
+import GET_ME from "@/graphql/queries/GET_ME";
+
+@Component({
+  components: {
+    Navbar
+  }
+})
+export default class App extends Vue {
+  async created() {
+    console.log("app created");
+    try {
+      const { data } = await this.$apollo.query({
+        query: GET_ME
+      });
+      if (data.me) {
+        this.$store.dispatch("changeLoggedInState", true);
+      }
+    } catch (err) {
+      console.error(err);
+      this.$store.dispatch("changeLoggedInState", false);
     }
   }
+}
+</script>
+
+<style lang="scss" scoped>
+#app {
+  margin-top: 3rem;
 }
 </style>
