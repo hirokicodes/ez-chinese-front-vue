@@ -57,3 +57,10 @@ export default class Navbar extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.navbar {
+  padding-inline-start: 100px;
+  padding-inline-end: 100px;
+}
+</style>
