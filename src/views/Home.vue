@@ -1,52 +1,81 @@
 <template>
-  <div class="home">
-    <div>Welcome to EZ Chinese</div>
-    <form @submit.prevent="handleTranslate">
-      <div class="field">
-        <label class="label">Chinese Text</label>
-        <div class="control">
-          <textarea class="textarea" v-model="chineseText" placeholder="Textarea"></textarea>
+  <section class="section">
+    <div class="container">
+      <div class="columns is-mobile">
+        <div class="column is-half is-offset-one-quarter">
+          <form @submit.prevent="handleTranslate">
+            <div class="field">
+              <div class="control">
+                <textarea
+                  class="textarea"
+                  v-model="chineseText"
+                  placeholder="Enter a Chinese character, word, or phrase"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="field">
+              <button class="button" type="submit">Translate</button>
+            </div>
+          </form>
+          <div
+            class="subtitle is-4"
+          >EZ Chinese is a platform to make your language learning journey easier. Simply enter Chinese text to create flashcards out of them.</div>
         </div>
       </div>
-
-      <div class="field">
-        <button class="button" type="submit">Translate</button>
+      <div class="columns is-mobile">
+        <div class="column is-half is-offset-one-quarter">
+          <div class="columns is-mobile is-multiline">
+            <div v-for="(hanzi, i) in hanziDataArray" :key="i" class="hanzi-text-unit">
+              <p>{{hanzi.pinyinDiacritic}}</p>
+              <p class="is-size-2">{{hanzi.simplified}}</p>
+            </div>
+          </div>
+        </div>
       </div>
-    </form>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import GET_HANZIS_IN_TEXT from "@/graphql/queries/GET_HANZIS_IN_TEXT";
+import GET_HANZI_OBJECTS_FROM_TEXT from "@/graphql/queries/GET_HANZI_OBJECTS_FROM_TEXT";
+
+interface Hanzi {
+  id: string;
+  simplified: string;
+  traditional: string;
+  definitions: string;
+  definitionsDiacritic: string;
+  pinyinDiacritic: string;
+  pinyinNumeric: string;
+  referencedSimplified: string | null;
+  referencedTraditional: string | null;
+}
 
 @Component
 export default class Home extends Vue {
-  private chineseText: String = "";
+  private chineseText: string = "";
+  private hanziDataArray: Hanzi[] = [];
 
   private async handleTranslate() {
-    console.log("handle translate");
-    const uniqueString = this.uniqueString();
     const { data } = await this.$apollo.query({
-      query: GET_HANZIS_IN_TEXT,
+      query: GET_HANZI_OBJECTS_FROM_TEXT,
       variables: {
-        text: uniqueString
+        text: this.chineseText
       }
     });
-
-    console.log("data", data);
-  }
-
-  public uniqueString(): String {
-    const originalText = this.chineseText;
-    let newText: String = "";
-    for (let i = 0; i < originalText.length; i++) {
-      if (newText.indexOf(originalText.charAt(i)) == -1) {
-        newText += originalText[i];
-      }
-    }
-    console.log("newText", newText);
-    return newText;
+    this.hanziDataArray = data.hanziObjectsFromText;
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.hanzi-text-unit {
+  margin: 10px;
+}
+
+textarea {
+  resize: none;
+}
+</style>
