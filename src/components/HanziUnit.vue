@@ -98,9 +98,9 @@ export default class HanziUnit extends Vue {
             __typename: "Mutation",
             bookmarkHanzi: {
               __typename: "User",
-              id: (this.me as any).id,
+              id: (this.me as Me).id,
               bookmarkedHanzis: [
-                ...(this.me as any).bookmarkedHanzis,
+                ...(this.me as Me).bookmarkedHanzis,
                 { id: this.hanzi.id, __typename: "Hanzi" }
               ]
             }
@@ -133,8 +133,8 @@ export default class HanziUnit extends Vue {
             __typename: "Mutation",
             unbookmarkHanzi: {
               __typename: "User",
-              id: (this.me as any).id,
-              bookmarkedHanzis: (this.me as any).bookmarkedHanzis.filter(
+              id: (this.me as Me).id,
+              bookmarkedHanzis: (this.me as Me).bookmarkedHanzis.filter(
                 (hanzi: Hanzi) => hanzi.id !== this.hanzi.id
               )
             }
