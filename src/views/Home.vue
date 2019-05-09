@@ -27,7 +27,7 @@
         <div class="column is-half is-offset-one-quarter">
           <div class="columns is-mobile is-multiline">
             <div v-for="(hanzi, i) in hanziDataArray" :key="i" class="hanzi-text-unit">
-              <HanziUnit :hanzi="hanzi"/>
+              <HanziUnit :hanzi="hanzi" :me="me"/>
             </div>
           </div>
         </div>
@@ -39,6 +39,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import GET_HANZI_OBJECTS_FROM_TEXT from "@/graphql/queries/GET_HANZI_OBJECTS_FROM_TEXT";
+import GET_ME from "@/graphql/queries/GET_ME";
 import HanziUnit from "@/components/HanziUnit.vue";
 
 interface Hanzi {
@@ -56,6 +57,9 @@ interface Hanzi {
 @Component({
   components: {
     HanziUnit
+  },
+  apollo: {
+    me: { query: GET_ME }
   }
 })
 export default class Home extends Vue {

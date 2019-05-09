@@ -42,17 +42,18 @@ interface Hanzi {
   referencedTraditional: string | null;
 }
 
-@Component({
-  apollo: {
-    me: {
-      query: GET_ME
-    }
-  }
-})
+interface Me {
+  id: String;
+  username: String;
+  email: String;
+  bookmarkedHanzis: Hanzi[];
+}
+
+@Component
 export default class HanziUnit extends Vue {
   @Prop() readonly hanzi!: Hanzi;
+  @Prop() readonly me?: Me;
 
-  private me = null;
   private isBookmarkButtonHovered: boolean = false;
 
   get isBookmarked() {
