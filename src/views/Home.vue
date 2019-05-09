@@ -27,8 +27,7 @@
         <div class="column is-half is-offset-one-quarter">
           <div class="columns is-mobile is-multiline">
             <div v-for="(hanzi, i) in hanziDataArray" :key="i" class="hanzi-text-unit">
-              <p>{{hanzi.pinyinDiacritic}}</p>
-              <p class="is-size-2">{{hanzi.simplified}}</p>
+              <HanziUnit :hanzi="hanzi"/>
             </div>
           </div>
         </div>
@@ -40,6 +39,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import GET_HANZI_OBJECTS_FROM_TEXT from "@/graphql/queries/GET_HANZI_OBJECTS_FROM_TEXT";
+import HanziUnit from "@/components/HanziUnit.vue";
 
 interface Hanzi {
   id: string;
@@ -53,7 +53,11 @@ interface Hanzi {
   referencedTraditional: string | null;
 }
 
-@Component
+@Component({
+  components: {
+    HanziUnit
+  }
+})
 export default class Home extends Vue {
   private chineseText: string = "";
   private hanziDataArray: Hanzi[] = [];
@@ -71,10 +75,6 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.hanzi-text-unit {
-  margin: 10px;
-}
-
 textarea {
   resize: none;
 }
