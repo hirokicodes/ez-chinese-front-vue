@@ -1,11 +1,9 @@
 import gql from "graphql-tag";
 
 export default gql`
-  query Me {
-    me {
+  mutation UnbookmarkHanzi($id: ID!) {
+    unbookmarkHanzi(id: $id) {
       id
-      username
-      email
       bookmarkedHanzis {
         id
       }

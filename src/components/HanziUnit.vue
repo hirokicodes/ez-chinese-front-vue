@@ -4,11 +4,19 @@
       <div>{{`${hanzi.traditional}/${hanzi.simplified}`}}</div>
       <div>{{`${hanzi.pinyinDiacritic}/${hanzi.pinyinNumeric}`}}</div>
       <div>{{hanzi.definitions}}</div>
-      <button class="button is-small has-text-info">
-        <i class="fas fa-bookmark"></i>
+      <button
+        class="button is-small"
+        :class="{'has-text-info': !isBookmarked, 'has-text-success': isBookmarked && !isBookmarkButtonHovered, 'has-text-danger': isBookmarked && isBookmarkButtonHovered}"
+        @click="handleClickBookmarkButton"
+        @mouseover="setIsBookmarkButtonHovered"
+        @mouseout="setIsBookmarkButtonHovered"
+      >
+        <i
+          :class="{'fas fa-bookmark': !isBookmarked, 'fas fa-check': isBookmarked && !isBookmarkButtonHovered, 'fas fa-times': isBookmarked && isBookmarkButtonHovered}"
+        ></i>
       </button>
     </div>
-    <div class="hanzi-text-unit" @mouseenter="setIsHovered" @mouseleave="setIsHovered">
+    <div class="hanzi-text-unit">
       <p>{{hanzi.pinyinDiacritic}}</p>
       <p class="is-size-2">{{hanzi.simplified}}</p>
     </div>
@@ -18,6 +26,9 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import GET_HANZI_OBJECTS_FROM_TEXT from "@/graphql/queries/GET_HANZI_OBJECTS_FROM_TEXT";
+import BOOKMARK_HANZI from "@/graphql/mutations/user/BOOKMARK_HANZI";
+import UNBOOKMARK_HANZI from "@/graphql/mutations/user/UNBOOKMARK_HANZI";
+import GET_ME from "@/graphql/queries/GET_ME";
 
 interface Hanzi {
   id: string;
@@ -31,14 +42,107 @@ interface Hanzi {
   referencedTraditional: string | null;
 }
 
-@Component
+@Component({
+  apollo: {
+    me: {
+      query: GET_ME
+    }
+  }
+})
 export default class HanziUnit extends Vue {
   @Prop() readonly hanzi!: Hanzi;
 
-  private isHovered: boolean = false;
+  private me = null;
+  private isBookmarkButtonHovered: boolean = false;
 
-  private setIsHovered(): void {
-    this.isHovered = !this.isHovered;
+  get isBookmarked() {
+    if (this.me) {
+      return (this.me as any).bookmarkedHanzis.some(
+        (hanzi: Hanzi) => hanzi.id === this.hanzi.id
+      );
+    }
+  }
+
+  private setIsBookmarkButtonHovered() {
+    this.isBookmarkButtonHovered = !this.isBookmarkButtonHovered;
+  }
+
+  private handleClickBookmarkButton() {
+    if (this.me) {
+      this.isBookmarked
+        ? this.handleUnbookmarkHanzi()
+        : this.handleBookmarkHanzi();
+    } else {
+      console.log("not logged in");
+    }
+  }
+
+  private async handleBookmarkHanzi() {
+    if (this.$store.state.loggedIn) {
+      try {
+        const { data } = await this.$apollo.mutate({
+          mutation: BOOKMARK_HANZI,
+          variables: {
+            id: this.hanzi.id
+          },
+          update: (cache, { data: { bookmarkHanzi } }) => {
+            const data = cache.readQuery({ query: GET_ME });
+            (data as any).me.bookmarkedHanzis = bookmarkHanzi.bookmarkedHanzis;
+            cache.writeQuery({
+              query: GET_ME,
+              data
+            });
+          },
+          optimisticResponse: {
+            __typename: "Mutation",
+            bookmarkHanzi: {
+              __typename: "User",
+              id: (this.me as any).id,
+              bookmarkedHanzis: [
+                ...(this.me as any).bookmarkedHanzis,
+                { id: this.hanzi.id, __typename: "Hanzi" }
+              ]
+            }
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  private async handleUnbookmarkHanzi() {
+    if (this.$store.state.loggedIn) {
+      try {
+        const { data } = await this.$apollo.mutate({
+          mutation: UNBOOKMARK_HANZI,
+          variables: {
+            id: this.hanzi.id
+          },
+          update: (cache, { data: { unbookmarkHanzi } }) => {
+            const data = cache.readQuery({ query: GET_ME });
+            (data as any).me.bookmarkedHanzis =
+              unbookmarkHanzi.bookmarkedHanzis;
+            cache.writeQuery({
+              query: GET_ME,
+              data
+            });
+          },
+          optimisticResponse: {
+            __typename: "Mutation",
+            unbookmarkHanzi: {
+              __typename: "User",
+              id: (this.me as any).id,
+              bookmarkedHanzis: (this.me as any).bookmarkedHanzis.filter(
+                (hanzi: Hanzi) => hanzi.id !== this.hanzi.id
+              )
+            }
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
 }
 </script>
