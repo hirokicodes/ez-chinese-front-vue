@@ -40,7 +40,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import GET_HANZI_OBJECTS_FROM_TEXT from "@/graphql/queries/GET_HANZI_OBJECTS_FROM_TEXT";
 import GET_ME from "@/graphql/queries/GET_ME";
-import HanziUnit from "@/components/HanziUnit.vue";
+import HanziUnit from "@/components/HanziUnit/HanziUnit.vue";
 
 interface Hanzi {
   id: string;
