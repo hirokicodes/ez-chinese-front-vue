@@ -38,6 +38,12 @@ export default new Router({
       name: "bookmarks",
       component: () => import("./views/Bookmarks.vue"),
       beforeEnter: AuthGuard
+    },
+    {
+      path: "./flashcards",
+      name: "flashcards",
+      component: () => import("./views/Flashcards.vue"),
+      beforeEnter: AuthGuard
     }
   ]
 });

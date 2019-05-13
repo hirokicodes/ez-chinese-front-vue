@@ -6,8 +6,11 @@ export default gql`
       id
       username
       email
-      bookmarkedHanzis {
+      flashcards {
         id
+        hanzi {
+          id
+        }
       }
     }
   }

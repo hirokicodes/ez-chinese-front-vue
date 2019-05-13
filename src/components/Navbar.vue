@@ -16,7 +16,7 @@
             <div class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link"></a>
               <div class="navbar-dropdown is-right">
-                <router-link to="/bookmarks" class="navbar-item has-text-grey-darker">Bookmarks</router-link>
+                <router-link to="/flashcards" class="navbar-item has-text-grey-darker">Flashcards</router-link>
                 <hr class="navbar-divider">
                 <a class="navbar-item has-text-grey-darker" @click="handleLogout">Logout</a>
               </div>

@@ -6,13 +6,13 @@
       <div>{{hanzi.definitions}}</div>
       <button
         class="button is-small"
-        :class="{'has-text-info': !isBookmarked, 'has-text-success': isBookmarked && !isBookmarkButtonHovered, 'has-text-danger': isBookmarked && isBookmarkButtonHovered}"
-        @click="handleClickBookmarkButton"
-        @mouseover="setIsBookmarkButtonHovered"
-        @mouseout="setIsBookmarkButtonHovered"
+        :class="{'has-text-info': !isSaved, 'has-text-success': isSaved && !isSaveButtonHovered, 'has-text-danger': isSaved && isSaveButtonHovered}"
+        @click="handleClickSaveButton"
+        @mouseover="setIsSaveButtonHovered"
+        @mouseout="setIsSaveButtonHovered"
       >
         <i
-          :class="{'fas fa-bookmark': !isBookmarked, 'fas fa-check': isBookmarked && !isBookmarkButtonHovered, 'fas fa-times': isBookmarked && isBookmarkButtonHovered}"
+          :class="{'fas fa-bookmark': !isSaved, 'fas fa-check': isSaved && !isSaveButtonHovered, 'fas fa-times': isSaved && isSaveButtonHovered}"
         ></i>
       </button>
     </div>
