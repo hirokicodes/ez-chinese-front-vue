@@ -34,15 +34,15 @@ export default new Router({
       component: () => import("./views/Signup.vue")
     },
     {
-      path: "/bookmarks",
-      name: "bookmarks",
-      component: () => import("./views/Bookmarks.vue"),
+      path: "/flashcards",
+      name: "flashcards",
+      component: () => import("./views/Flashcards.vue"),
       beforeEnter: AuthGuard
     },
     {
-      path: "./flashcards",
-      name: "flashcards",
-      component: () => import("./views/Flashcards.vue"),
+      path: "/decks",
+      name: "decks",
+      component: () => import("./views/Decks.vue"),
       beforeEnter: AuthGuard
     }
   ]

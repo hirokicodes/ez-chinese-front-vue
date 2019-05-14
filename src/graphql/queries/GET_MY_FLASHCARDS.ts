@@ -5,6 +5,7 @@ export default gql`
     me {
       id
       flashcards {
+        id
         hanzi {
           id
           simplified

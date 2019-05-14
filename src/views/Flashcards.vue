@@ -19,7 +19,7 @@
           </div>
           <template v-if="me">
             <template v-if="displayType === 0">
-              <div v-for="(flashcard, i) in me.flashcards" :key="i">
+              <div v-for="(flashcard, i) in flashCardsToShow" :key="i">
                 <div class="box">
                   <div class="media">
                     <div class="media-left">{{flashcard.hanzi.simplified}}</div>
@@ -38,7 +38,7 @@
             <template v-if="displayType === 1">
               <div class="columns is-multiline is-mobile">
                 <div
-                  v-for="(flashcard, i) in me.flashcards"
+                  v-for="(flashcard, i) in flashCardsToShow"
                   :key="i"
                   class="column is-one-quarter-desktop is-one-quarter-tablet is-half-mobile"
                 >
@@ -73,6 +73,17 @@ enum DisplayType {
 })
 export default class Flashcards extends Vue {
   private displayType: DisplayType = DisplayType.List;
+  private flashCardsToShow = [];
+
+  private async created() {
+    const { data } = await this.$apollo.query({
+      query: GET_MY_FLASHCARDS
+    });
+
+    if (data) {
+      this.flashCardsToShow = data.me.flashcards;
+    }
+  }
 
   private setDisplayTypeToList() {
     this.displayType = DisplayType.List;
