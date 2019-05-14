@@ -5,7 +5,7 @@
         <div class="column is-10 is-offset-1">
           <div class="level">
             <div class="level-left">
-              <div class="title has-text-centered">Decks</div>
+              <div class="title has-text-centered" v-if="deck">Deck: {{deck.name}}</div>
             </div>
             <div class="level-right">
               <span>View:</span>
@@ -19,12 +19,12 @@
           </div>
           <template v-if="me">
             <template v-if="displayType === 0">
-              <router-link v-for="(deck, i) in me.decks" :key="i" :to="`/deck/${deck.id}`">
+              <div v-for="(flashcard, i) in deck.flashcards" :key="i">
                 <div class="box">
                   <div class="media">
-                    <div class="media-left">{{deck.name}}</div>
+                    <div class="media-left">{{flashcard.hanzi.simplified}}</div>
                     <div class="media-content">
-                      <div class="content">{{deck.description}}</div>
+                      <div class="content">{{flashcard.hanzi.definitions}}</div>
                     </div>
                     <div class="media-right">
                       <button class="button is-small">
@@ -33,7 +33,7 @@
                     </div>
                   </div>
                 </div>
-              </router-link>
+              </div>
             </template>
             <template v-if="displayType === 1">
               <div class="columns is-multiline is-mobile">
@@ -55,7 +55,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import GET_MY_DECKS from "../graphql/queries/GET_MY_DECKS";
+import GET_DECK from "../graphql/queries/GET_DECK";
+import GET_MY_FLASHCARDS from "@/graphql/queries/GET_MY_FLASHCARDS";
 
 enum DisplayType {
   List,
@@ -64,11 +65,25 @@ enum DisplayType {
 
 @Component({
   apollo: {
-    me: { query: GET_MY_DECKS }
+    me: {
+      query: GET_MY_FLASHCARDS
+    },
+    deck: {
+      query: GET_DECK,
+      variables() {
+        return {
+          id: this.$route.params.id
+        };
+      }
+    }
   }
 })
-export default class Decks extends Vue {
+export default class Deck extends Vue {
   private displayType: DisplayType = DisplayType.List;
+
+  created() {
+    console.log(this.$route);
+  }
 
   private setDisplayTypeToList() {
     this.displayType = DisplayType.List;

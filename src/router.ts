@@ -44,6 +44,11 @@ export default new Router({
       name: "decks",
       component: () => import("./views/Decks.vue"),
       beforeEnter: AuthGuard
+    },
+    {
+      path: "/deck/:id",
+      name: "deck",
+      component: () => import("./views/Deck.vue")
     }
   ]
 });
