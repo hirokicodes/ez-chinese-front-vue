@@ -6,6 +6,7 @@
           <div class="level">
             <div class="level-left">
               <div class="title has-text-centered" v-if="deck">Deck: {{deck.name}}</div>
+              <button class="button" @click="openStudyModal">Study</button>
             </div>
             <div class="level-right">
               <span>View:</span>
@@ -50,6 +51,13 @@
         </div>
       </div>
     </div>
+    <div class="modal" :class="{ 'is-active': studyModal}" v-if="studyModal">
+      <div class="modal-background" @click.self.stop="closeStudyModal"></div>
+      <div class="modal-content">
+        <div class="box">study mode</div>
+      </div>
+      <button class="modal-close is-large" aria-label="close" @click.self.stop="closeStudyModal"></button>
+    </div>
   </section>
 </template>
 
@@ -80,9 +88,18 @@ enum DisplayType {
 })
 export default class Deck extends Vue {
   private displayType: DisplayType = DisplayType.List;
+  private studyModal: boolean = false;
 
   created() {
     console.log(this.$route);
+  }
+
+  private openStudyModal() {
+    this.studyModal = true;
+  }
+
+  private closeStudyModal() {
+    this.studyModal = false;
   }
 
   private setDisplayTypeToList() {
