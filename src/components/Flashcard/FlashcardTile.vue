@@ -30,47 +30,22 @@ import { mixins } from "vue-class-component";
 import CREATE_FLASHCARD from "@/graphql/mutations/flashcard/CREATE_FLASHCARD";
 import DELETE_FLASHCARD from "@/graphql/mutations/flashcard/DELETE_FLASHCARD";
 import GET_ME from "@/graphql/queries/GET_ME";
+import { Types } from "@/types/types";
 
 import HanziUnitMixin from "@/mixins/hanziUnitMixin.ts";
 
-interface Hanzi {
-  id: string;
-  simplified: string;
-  traditional: string;
-  definitions: string;
-  definitionsDiacritic: string;
-  pinyinDiacritic: string;
-  pinyinNumeric: string;
-  referencedSimplified: string | null;
-  referencedTraditional: string | null;
-}
-
-interface Flashcard {
-  id: string;
-  hanzi: Hanzi;
-  comfortLevel: number;
-  updatedAt: string;
-  createdAt: string;
-}
-
-interface Me {
-  id: String;
-  username: String;
-  email: String;
-  flashcards: Flashcard[];
-}
-
 @Component
 export default class FlashcardTile extends Vue {
-  @Prop() readonly flashcard!: Flashcard;
-  @Prop() readonly me?: Me;
+  @Prop() readonly flashcard!: Types.Flashcard;
+  @Prop() readonly me?: Types.Me;
 
   private isSaveButtonHovered: boolean = false;
 
   get isSaved() {
     if (this.me) {
-      return (this.me as Me).flashcards.some(
-        (flashcard: Flashcard) => flashcard.hanzi.id === this.flashcard.hanzi.id
+      return (this.me as Types.Me).flashcards.some(
+        (flashcard: Types.Flashcard) =>
+          flashcard.hanzi.id === this.flashcard.hanzi.id
       );
     }
   }
@@ -134,7 +109,8 @@ export default class FlashcardTile extends Vue {
           update: (cache, { data: { deleteFlashcard } }) => {
             const data = cache.readQuery({ query: GET_ME });
             (data as any).me.flashcards = (data as any).me.flashcards.filter(
-              (flashcard: Flashcard) => flashcard.id !== deleteFlashcard.id
+              (flashcard: Types.Flashcard) =>
+                flashcard.id !== deleteFlashcard.id
             );
             cache.writeQuery({
               query: GET_ME,

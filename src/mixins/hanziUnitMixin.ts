@@ -3,45 +3,19 @@ import Component from "vue-class-component";
 import CREATE_FLASHCARD from "@/graphql/mutations/flashcard/CREATE_FLASHCARD";
 import DELETE_FLASHCARD from "@/graphql/mutations/flashcard/DELETE_FLASHCARD";
 import GET_ME from "@/graphql/queries/GET_ME";
-
-interface Hanzi {
-  id: string;
-  simplified: string;
-  traditional: string;
-  definitions: string;
-  definitionsDiacritic: string;
-  pinyinDiacritic: string;
-  pinyinNumeric: string;
-  referencedSimplified: string | null;
-  referencedTraditional: string | null;
-}
-
-interface Flashcard {
-  id: string;
-  hanzi: Hanzi;
-  comfortLevel: number;
-  updatedAt: string;
-  createdAt: string;
-}
-
-interface Me {
-  id: String;
-  username: String;
-  email: String;
-  flashcards: Flashcard[];
-}
+import { Types } from "@/types/types";
 
 @Component
 export default class HanziUnitMixin extends Vue {
-  @Prop() readonly hanzi!: Hanzi;
-  @Prop() readonly me?: Me;
+  @Prop() readonly hanzi!: Types.Hanzi;
+  @Prop() readonly me?: Types.Me;
 
   private isSaveButtonHovered: boolean = false;
 
   get isSaved() {
     if (this.me) {
-      return (this.me as Me).flashcards.some(
-        (flashcard: Flashcard) => flashcard.hanzi.id === this.hanzi.id
+      return (this.me as Types.Me).flashcards.some(
+        (flashcard: Types.Flashcard) => flashcard.hanzi.id === this.hanzi.id
       );
     }
   }
@@ -93,7 +67,7 @@ export default class HanziUnitMixin extends Vue {
 
   private async handleDeleteHanziAsFlashcard() {
     if (this.$store.state.loggedIn) {
-      const flashcard = (this.me as Me).flashcards.find(
+      const flashcard = (this.me as Types.Me).flashcards.find(
         flashcard => flashcard.hanzi.id === this.hanzi.id
       );
       if (flashcard) {
@@ -106,7 +80,8 @@ export default class HanziUnitMixin extends Vue {
             update: (cache, { data: { deleteFlashcard } }) => {
               const data = cache.readQuery({ query: GET_ME });
               (data as any).me.flashcards = (data as any).me.flashcards.filter(
-                (flashcard: Flashcard) => flashcard.id !== deleteFlashcard.id
+                (flashcard: Types.Flashcard) =>
+                  flashcard.id !== deleteFlashcard.id
               );
               cache.writeQuery({
                 query: GET_ME,

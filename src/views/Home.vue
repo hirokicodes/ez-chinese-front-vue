@@ -41,18 +41,7 @@ import { Component, Vue } from "vue-property-decorator";
 import GET_HANZI_OBJECTS_FROM_TEXT from "@/graphql/queries/GET_HANZI_OBJECTS_FROM_TEXT";
 import GET_ME from "@/graphql/queries/GET_ME";
 import HanziUnit from "@/components/HanziUnit/HanziUnit.vue";
-
-interface Hanzi {
-  id: string;
-  simplified: string;
-  traditional: string;
-  definitions: string;
-  definitionsDiacritic: string;
-  pinyinDiacritic: string;
-  pinyinNumeric: string;
-  referencedSimplified: string | null;
-  referencedTraditional: string | null;
-}
+import { Types } from "@/types/types";
 
 @Component({
   components: {
@@ -64,7 +53,7 @@ interface Hanzi {
 })
 export default class Home extends Vue {
   private chineseText: string = "";
-  private hanziDataArray: Hanzi[] = [];
+  private hanziDataArray: Types.Hanzi[] = [];
 
   private async handleTranslate() {
     const { data } = await this.$apollo.query({
