@@ -6,7 +6,7 @@
           <div class="level" v-if="deck">
             <div class="level-left">
               <div class="title has-text-centered">Deck: {{deck.name}}</div>
-              <button class="button" @click="openStudyModal">Study</button>
+              <button class="button" @click="goToStudyPage">Study</button>
             </div>
             <div class="level-right">
               <span>View:</span>
@@ -51,13 +51,6 @@
         </div>
       </div>
     </div>
-    <div class="modal" :class="{ 'is-active': studyModal}" v-if="studyModal">
-      <div class="modal-background" @click.self.stop="closeStudyModal"></div>
-      <div class="modal-content">
-        <div class="box">study mode</div>
-      </div>
-      <button class="modal-close is-large" aria-label="close" @click.self.stop="closeStudyModal"></button>
-    </div>
   </section>
 </template>
 
@@ -65,6 +58,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import GET_DECK from "../graphql/queries/GET_DECK";
 import GET_MY_FLASHCARDS from "@/graphql/queries/GET_MY_FLASHCARDS";
+import { Types } from "@/types/types";
 
 enum DisplayType {
   List,
@@ -88,18 +82,10 @@ enum DisplayType {
 })
 export default class Deck extends Vue {
   private displayType: DisplayType = DisplayType.List;
-  private studyModal: boolean = false;
+  private deck: null | Types.Deck = null;
 
   created() {
     console.log(this.$route);
-  }
-
-  private openStudyModal() {
-    this.studyModal = true;
-  }
-
-  private closeStudyModal() {
-    this.studyModal = false;
   }
 
   private setDisplayTypeToList() {
@@ -108,6 +94,12 @@ export default class Deck extends Vue {
 
   private setDisplayTypeToGrid() {
     this.displayType = DisplayType.Grid;
+  }
+
+  private goToStudyPage() {
+    if (this.deck) {
+      this.$router.push(`/study/${this.deck.id}`);
+    }
   }
 }
 </script>

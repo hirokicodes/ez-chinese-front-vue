@@ -8,6 +8,7 @@ export default gql`
       description
       flashcards {
         id
+        comfortLevel
         hanzi {
           id
           simplified

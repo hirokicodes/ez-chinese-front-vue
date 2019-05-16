@@ -34,6 +34,11 @@ export default new Router({
       component: () => import("./views/Signup.vue")
     },
     {
+      path: "/study/:id",
+      name: "study",
+      component: () => import("./views/Study.vue")
+    },
+    {
       path: "/flashcards",
       name: "flashcards",
       component: () => import("./views/Flashcards.vue"),
