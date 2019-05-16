@@ -8,6 +8,11 @@
               <div class="title has-text-centered">Flashcards</div>
             </div>
             <div class="level-right">
+              <button
+                class="button"
+                v-if="isSelectingFlashcard"
+                @click="openAddFlashcardsMenu"
+              >Add to deck</button>
               <span>View:</span>
               <button class="button is-small" @click="setDisplayTypeToList">
                 <i class="fas fa-list"></i>
@@ -33,6 +38,7 @@
                     </div>
                   </div>
                 </div>-->
+                <input type="checkbox" v-model="flashcardsSelected" :value="flashcard">
                 <FlashcardListComponent
                   :flashcard="flashcard"
                   :me="me"
@@ -67,6 +73,21 @@
         @click.self.stop="closeAddFlashcardMenu"
       ></button>
     </div>
+    <!-- Add Multiple Flashcards to Deck(s) Menu Modal -->
+    <div class="modal" :class="{ 'is-active': addFlashcardsMenu}" v-if="addFlashcardsMenu">
+      <div class="modal-background" @click.self.stop="closeAddFlashcardsMenu"></div>
+      <div class="modal-content">
+        <AddFlashcardsToDeckMenu
+          :flashcards="flashcardsSelected"
+          @addToDeck="flashcardsSelected = []; closeAddFlashcardsMenu();"
+        />
+      </div>
+      <button
+        class="modal-close is-large"
+        aria-label="close"
+        @click.self.stop="closeAddFlashcardsMenu"
+      ></button>
+    </div>
   </section>
 </template>
 
@@ -76,6 +97,7 @@ import GET_MY_FLASHCARDS from "../graphql/queries/GET_MY_FLASHCARDS";
 import FlashcardTile from "@/components/Flashcard/FlashcardTile.vue";
 import FlashcardListComponent from "@/components/Flashcard/FlashcardListComponent.vue";
 import AddFlashcardToDeckMenu from "@/components/AddFlashcardToDeckMenu.vue";
+import AddFlashcardsToDeckMenu from "@/components/AddFlashcardsToDeckMenu.vue";
 import { Types } from "@/types/types";
 
 enum DisplayType {
@@ -87,7 +109,8 @@ enum DisplayType {
   components: {
     FlashcardTile,
     FlashcardListComponent,
-    AddFlashcardToDeckMenu
+    AddFlashcardToDeckMenu,
+    AddFlashcardsToDeckMenu
   },
   apollo: {
     me: { query: GET_MY_FLASHCARDS }
@@ -95,9 +118,12 @@ enum DisplayType {
 })
 export default class Flashcards extends Vue {
   private displayType: DisplayType = DisplayType.List;
+  private selectFlashcardsMode: boolean = false;
   private addFlashcardMenu: boolean = false;
+  private addFlashcardsMenu: boolean = false;
   private flashCardsToShow = [];
   private flashcardSelected: null | Types.Flashcard = null;
+  private flashcardsSelected: Types.Flashcard[] = [];
 
   private async created() {
     const { data } = await this.$apollo.query({
@@ -109,6 +135,10 @@ export default class Flashcards extends Vue {
     }
   }
 
+  get isSelectingFlashcard() {
+    return this.flashcardsSelected.length > 0 ? true : false;
+  }
+
   private openAddFlashcardMenu(flashcard: Types.Flashcard) {
     this.flashcardSelected = flashcard;
     this.addFlashcardMenu = true;
@@ -116,6 +146,14 @@ export default class Flashcards extends Vue {
 
   private closeAddFlashcardMenu() {
     this.addFlashcardMenu = false;
+  }
+
+  private openAddFlashcardsMenu() {
+    this.addFlashcardsMenu = true;
+  }
+
+  private closeAddFlashcardsMenu() {
+    this.addFlashcardsMenu = false;
   }
 
   private setDisplayTypeToList() {

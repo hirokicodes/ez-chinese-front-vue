@@ -18,7 +18,7 @@
               </button>
             </div>
           </div>
-          <template v-if="me">
+          <template v-if="deck">
             <template v-if="displayType === 0">
               <div v-for="(flashcard, i) in deck.flashcards" :key="i">
                 <div class="box">

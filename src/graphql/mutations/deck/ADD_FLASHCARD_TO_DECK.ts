@@ -4,6 +4,8 @@ export default gql`
   mutation AddFlashcardToDeck($deckId: ID!, $flashcardId: ID!) {
     addFlashcardToDeck(deckId: $deckId, flashcardId: $flashcardId) {
       id
+      name
+      description
       flashcards {
         id
       }
