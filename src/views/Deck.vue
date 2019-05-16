@@ -3,9 +3,9 @@
     <div class="container">
       <div class="columns is-mobile">
         <div class="column is-10 is-offset-1">
-          <div class="level">
+          <div class="level" v-if="deck">
             <div class="level-left">
-              <div class="title has-text-centered" v-if="deck">Deck: {{deck.name}}</div>
+              <div class="title has-text-centered">Deck: {{deck.name}}</div>
               <button class="button" @click="openStudyModal">Study</button>
             </div>
             <div class="level-right">

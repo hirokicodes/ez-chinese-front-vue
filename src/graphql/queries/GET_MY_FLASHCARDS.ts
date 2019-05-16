@@ -18,6 +18,9 @@ export default gql`
           referencedTraditional
         }
       }
+      decks {
+        id
+      }
     }
   }
 `;

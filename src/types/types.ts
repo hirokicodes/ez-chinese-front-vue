@@ -4,6 +4,14 @@ export namespace Types {
     username: String;
     email: String;
     flashcards: Flashcard[];
+    decks: Deck[];
+  }
+
+  export interface Deck {
+    id: string;
+    name: string;
+    description: string | null;
+    flashcards: Flashcard[];
   }
 
   export interface Hanzi {
