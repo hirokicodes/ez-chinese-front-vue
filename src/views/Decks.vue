@@ -19,21 +19,24 @@
           </div>
           <template v-if="me">
             <template v-if="displayType === 0">
-              <router-link v-for="(deck, i) in me.decks" :key="i" :to="`/deck/${deck.id}`">
-                <div class="box">
-                  <div class="media">
-                    <div class="media-left">{{deck.name}}</div>
-                    <div class="media-content">
-                      <div class="content">{{deck.description}}</div>
-                    </div>
-                    <div class="media-right">
-                      <button class="button is-small">
-                        <i class="fas fa-bookmark"></i>
-                      </button>
-                    </div>
+              <div class="box" v-for="(deck, i) in me.decks" :key="i">
+                <div class="media">
+                  <div class="media-left">
+                    <router-link :to="`/deck/${deck.id}`">{{deck.name}}</router-link>
+                  </div>
+                  <div class="media-content">
+                    <div class="content">{{deck.description}}</div>
+                  </div>
+                  <div class="media-right">
+                    <button class="button is-small">
+                      <i class="fas fa-bookmark"></i>
+                    </button>
+                    <button class="button is-small" @click.self.stop="goToStudyRoute(deck.id)">
+                      <i class="fas fa-book-open"></i>
+                    </button>
                   </div>
                 </div>
-              </router-link>
+              </div>
             </template>
             <template v-if="displayType === 1">
               <div class="columns is-multiline is-mobile">
@@ -76,6 +79,10 @@ export default class Decks extends Vue {
 
   private setDisplayTypeToGrid() {
     this.displayType = DisplayType.Grid;
+  }
+
+  private goToStudyRoute(deckId: string) {
+    this.$router.push(`/study/${deckId}`);
   }
 }
 </script>

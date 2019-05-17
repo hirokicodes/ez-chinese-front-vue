@@ -11,7 +11,7 @@
               <span>right</span>
             </div>
           </div>
-          <template v-if="deck">
+          <template v-if="deck && flashcardsToStudy.length > 0">
             <div class="box has-text-centered" @click="flipFlashcard">
               <div v-if="!showFlashcardBack">
                 <p class="is-size-1">{{currentFlashcard.hanzi.simplified}}</p>
