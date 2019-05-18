@@ -13,20 +13,33 @@
           </div>
           <template v-if="deck && flashcardsToStudy.length > 0">
             <div class="box has-text-centered" @click="flipFlashcard">
+              <div class="level">
+                <div class="level-left">
+                  <button
+                    v-show="prevCardExists"
+                    class="button"
+                    @click.self.stop="goToPrevFlashcard"
+                  >
+                    <i class="fas fa-arrow-left"></i>
+                  </button>
+                </div>
+                <div class="level-right">
+                  <button
+                    v-show="nextCardExists"
+                    class="button"
+                    @click.self.stop="goToNextFlashcard"
+                  >
+                    <i class="fas fa-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
               <div v-if="!showFlashcardBack">
                 <p class="is-size-1">{{currentFlashcard.hanzi.simplified}}</p>
               </div>
               <div v-else>
-                <p class="is-size-1">{{currentFlashcard.hanzi.definitions}}</p>
+                <div class="is-size-1">{{currentFlashcard.hanzi.pinyinDiacritic}}</div>
+                <div class="is-size-1">{{currentFlashcard.hanzi.definitions}}</div>
                 <span>Comfort level: {{currentFlashcard.comfortLevel}}</span>
-                <div class="level">
-                  <div class="level-left">
-                    <button class="button" @click.self.stop="goToPrevFlashcard">Prev</button>
-                  </div>
-                  <div class="level-right">
-                    <button class="button" @click.self.stop="goToNextFlashcard">Next</button>
-                  </div>
-                </div>
               </div>
             </div>
           </template>
@@ -84,6 +97,16 @@ export default class Study extends Vue {
   @Watch("currentFlashcardIndex")
   onCurrentFlashcardIndexChange() {
     this.showFlashcardBack = false;
+  }
+
+  get prevCardExists() {
+    return this.currentFlashcardIndex === 0 ? false : true;
+  }
+
+  get nextCardExists() {
+    return this.currentFlashcardIndex + 1 === this.flashcardsToStudy.length
+      ? false
+      : true;
   }
 
   private goToNextFlashcard() {

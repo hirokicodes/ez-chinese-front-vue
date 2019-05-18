@@ -31,7 +31,7 @@
                     <button class="button is-small">
                       <i class="fas fa-bookmark"></i>
                     </button>
-                    <button class="button is-small" @click.self.stop="goToStudyRoute(deck.id)">
+                    <button class="button is-small" @click="goToStudyRoute(deck.id)">
                       <i class="fas fa-book-open"></i>
                     </button>
                   </div>
