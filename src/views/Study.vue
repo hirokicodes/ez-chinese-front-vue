@@ -12,7 +12,7 @@
             </div>
           </div>
           <template v-if="deck && flashcardsToStudy.length > 0">
-            <div class="box has-text-centered" @click="flipFlashcard">
+            <div class="box has-text-centered" @click.self.stop="flipFlashcard">
               <div class="level">
                 <div class="level-left">
                   <button
@@ -39,7 +39,44 @@
               <div v-else>
                 <div class="is-size-1">{{currentFlashcard.hanzi.pinyinDiacritic}}</div>
                 <div class="is-size-1">{{currentFlashcard.hanzi.definitions}}</div>
-                <span>Comfort level: {{currentFlashcard.comfortLevel}}</span>
+                <div>Comfort level: {{currentFlashcard.comfortLevel}}</div>
+                <div>
+                  <input
+                    type="radio"
+                    :value="1"
+                    name="comfortLevel"
+                    v-model="currentFlashcard.comfortLevel"
+                  >
+                  1
+                  <input
+                    type="radio"
+                    :value="2"
+                    name="comfortLevel"
+                    v-model="currentFlashcard.comfortLevel"
+                  >
+                  2
+                  <input
+                    type="radio"
+                    :value="3"
+                    name="comfortLevel"
+                    v-model="currentFlashcard.comfortLevel"
+                  >
+                  3
+                  <input
+                    type="radio"
+                    :value="4"
+                    name="comfortLevel"
+                    v-model="currentFlashcard.comfortLevel"
+                  >
+                  4
+                  <input
+                    type="radio"
+                    :value="5"
+                    name="comfortLevel"
+                    v-model="currentFlashcard.comfortLevel"
+                  >
+                  5
+                </div>
               </div>
             </div>
           </template>
@@ -53,6 +90,7 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import GET_DECK from "../graphql/queries/GET_DECK";
 import GET_MY_FLASHCARDS from "@/graphql/queries/GET_MY_FLASHCARDS";
+import CHANGE_FLASHCARD_COMFORT_LEVEL from "@/graphql/mutations/flashcard/CHANGE_FLASHCARD_COMFORT_LEVEL";
 import { Types } from "@/types/types";
 
 enum DisplayType {
@@ -78,17 +116,13 @@ export default class Study extends Vue {
   private currentFlashcardIndex: number = 0;
   private flashcardsToStudy: Types.Flashcard[] = [];
 
-  created() {
-    console.log(this.$route);
-  }
-
-  get currentFlashcard() {
+  get currentFlashcard(): Types.Flashcard {
     return this.flashcardsToStudy[this.currentFlashcardIndex];
   }
 
   @Watch("deck")
   onDeckChange() {
-    if (this.deck) {
+    if (this.deck && this.deck.flashcards.length > 0) {
       this.flashcardsToStudy = this.deck.flashcards;
       this.shuffleArray(this.flashcardsToStudy);
     }
@@ -109,11 +143,29 @@ export default class Study extends Vue {
       : true;
   }
 
+  private changeComfortLevel() {
+    if (this.currentFlashcard) {
+      try {
+        this.$apollo.mutate({
+          mutation: CHANGE_FLASHCARD_COMFORT_LEVEL,
+          variables: {
+            id: this.currentFlashcard.id,
+            comfortLevel: this.currentFlashcard.comfortLevel
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
   private goToNextFlashcard() {
+    this.changeComfortLevel();
     this.currentFlashcardIndex += 1;
   }
 
   private goToPrevFlashcard() {
+    this.changeComfortLevel();
     this.currentFlashcardIndex -= 1;
   }
 
